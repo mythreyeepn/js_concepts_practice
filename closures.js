@@ -120,3 +120,28 @@ const check = Counter();
 check.add(6);
 check.add(20);
 console.log(check.retrieve());
+
+//6. Make this code run only once
+let view;
+function likeVideo(){
+  view="Video Seen"
+  console.log("subscribe",view)
+}
+
+function likeVideo(){
+let call=0;
+  return function () {
+    if(call>0){
+      console.log("No need to call");
+    }else{
+      view="Video Seen"
+      console.log("subscribe",view)
+      call++;
+    }
+
+  }
+
+}
+
+const vid = likeVideo();
+vid();
