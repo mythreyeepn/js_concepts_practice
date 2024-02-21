@@ -31,7 +31,7 @@ function sayHi(name) {
 function sayBye(age) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      reject("Rejected Bye bye" + age);
+      resolve("Rejected Bye bye" + age);
     }, 1000);
   });
 }
@@ -86,18 +86,18 @@ Promise.all([
     console.error("error : promise failed");
   });
 
-  // Promise.race returns the first promise that gets fullfilled or rejected
-  Promise.race([
-    importantAction("Good Morning"),
-    sayHi("Mythreyee "),
-    sayBye("20's"),
-  ])
-    .then((res) => {
-      console.log(res);
-    })
-    .catch((err) => {
-      console.error("error : promise failed");
-    });
+// Promise.race returns the first promise that gets fullfilled or rejected
+Promise.race([
+  importantAction("Good Morning"),
+  sayHi("Mythreyee "),
+  sayBye("20's"),
+])
+  .then((res) => {
+    console.log(res);
+  })
+  .catch((err) => {
+    console.error("error : promise failed");
+  });
 // Promise.all settled it executes all the promises even if any promise fails it returns all that are fullfilled
 Promise.allSettled([
   importantAction("Good Morning"),
@@ -111,15 +111,89 @@ Promise.allSettled([
     console.error("error : promise failed");
   });
 
-  // Promise.any it only returns the first fullfilled promise and ignores all the rejected
-  Promise.any([
-    importantAction("Good Morning"),
-    sayHi("Mythreyee "),
-    sayBye("20's"),
-  ])
-    .then((res) => {
-      console.log(res);
-    })
-    .catch((err) => {
-      console.error("error : promise failed");
-    });
+// Promise.any it only returns the first fullfilled promise and ignores all the rejected
+Promise.any([
+  importantAction("Good Morning"),
+  sayHi("Mythreyee "),
+  sayBye("20's"),
+])
+  .then((res) => {
+    console.log(res);
+  })
+  .catch((err) => {
+    console.error("error : promise failed");
+  });
+
+// Async-Await
+
+const results = async () => {
+  try {
+    const msg1 = await importantAction("Good Morning");
+    const msg2 = await sayHi("Mythreyee ");
+    const msg3 = await sayBye("20's");
+
+    console.log(msg1, msg2, msg3);
+  } catch (error) {
+    console.error("New Error");
+  }
+};
+results();
+console.log(results);
+
+//1. whats the o/p
+console.log("start");
+
+const promise1 = new Promise((resolve, reject) => {
+  console.log(1);
+  resolve(2);
+});
+
+promise1.then((res) => {
+  console.log(res);
+});
+console.log("end"); // o/p order start,1,end,2
+
+//2. whats the o/p
+console.log("start");
+
+const promise2 = new Promise((resolve, reject) => {
+  console.log(1);
+  resolve(2);
+  console.log(3);
+});
+
+promise2.then((res) => {
+  console.log(res);
+});
+console.log("end");
+// o/p order start,1,3,end,2
+
+// Promise chaining
+const firstPromise = new Promise((resolve, reject) => {
+  resolve("First");
+});
+const secondPromise = new Promise((resolve, reject) => {
+  resolve(firstPromise);
+});
+
+secondPromise
+  .then((res) => {
+    return res;
+  })
+  .then((res) => console.log(res));
+
+//Promise recursion
+
+function promRecurse(funcPromises) {
+  if (funcPromises.length === 0) return;
+
+  const currPromise = funcPromises.shift();
+  currPromise.then((res) => console.log(res)).catch((err) => console.log(err));
+  promRecurse(funcPromises);
+}
+
+promRecurse([
+  importantAction("Good Morning"),
+  sayHi("Mythreyee "),
+  sayBye("20's"),
+]);
